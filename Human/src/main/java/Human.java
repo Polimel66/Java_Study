@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public abstract class Human {
@@ -30,67 +31,67 @@ public abstract class Human {
 }
 
 class Student extends Human {
-    private final String university;
-    private final int course;
+    private final String academicGroup;
+    private final double numberOfPoints;
 
 
-    public Student(String name, String surname, int yearOfBirth, String university, int course) {
+    public Student(String name, String surname, int yearOfBirth, String academicGroup, double numberOfPoints) {
         super(name, surname, yearOfBirth);
-        this.university = university;
-        this.course = course;
+        this.academicGroup = academicGroup;
+        this.numberOfPoints = numberOfPoints;
     }
 
-    public String getUniversity() {
-        return university;
+    public String getAcademicGroup() {
+        return academicGroup;
     }
 
-    public int getCourse() {
-        return course;
+    public double getNumberOfPoints() {
+        return numberOfPoints;
     }
 
-    public static String findTheMostPopularUniversity(ArrayList<Student> students) {
+    public static String findTheMostPopularAcademicGroup(ArrayList<Student> students) {
         Map<String, Integer> dictionary = new HashMap<String, Integer>();
         for (var student : students) {
-            if (dictionary.containsKey(student.getUniversity())) {
-                var count = dictionary.get(student.getUniversity()) + 1;
-                dictionary.remove(student.getUniversity());
-                dictionary.put(student.getUniversity(), count);
+            if (dictionary.containsKey(student.getAcademicGroup())) {
+                var count = dictionary.get(student.getAcademicGroup()) + 1;
+                dictionary.remove(student.getAcademicGroup());
+                dictionary.put(student.getAcademicGroup(), count);
             } else {
-                dictionary.put(student.getUniversity(), 1);
+                dictionary.put(student.getAcademicGroup(), 1);
             }
         }
         var maxCount = 0;
-        var popularUniversity = "";
+        var popularAcademicGroup = "";
         for (var entry : dictionary.entrySet()) {
             if (entry.getValue() > maxCount) {
                 maxCount = entry.getValue();
-                popularUniversity = entry.getKey();
+                popularAcademicGroup = entry.getKey();
             }
         }
-        return String.format("Самый популярный университет: %s", popularUniversity);
+        return String.format("Самая популярная академическая группа: %s", popularAcademicGroup);
     }
 
     public String toString() {
-        return String.format("%s %s %s г. - университет: %s, курс: %s", getName(), getSurname(), getYearOfBirth(), getUniversity(), getCourse());
+        return String.format("%s %s %s г. - академическая группа: %s, количество баллов: %s", getName(), getSurname(), getYearOfBirth(), getAcademicGroup(), getNumberOfPoints());
     }
 }
 
 class Worker extends Human {
     private final String company;
-    private final int experience;
+    private final double salary;
 
-    public Worker(String name, String surname, int yearOfBirth, String company, int experience) {
+    public Worker(String name, String surname, int yearOfBirth, String company, double salary) {
         super(name, surname, yearOfBirth);
         this.company = company;
-        this.experience = experience;
+        this.salary = salary;
     }
 
     public String getCompany() {
         return company;
     }
 
-    public int getExperience() {
-        return experience;
+    public double getSalary() {
+        return salary;
     }
 
     public static String findTheMostPopularCompany(ArrayList<Worker> workers) {
@@ -116,14 +117,13 @@ class Worker extends Human {
     }
 
     public String toString() {
-        return String.format("%s %s %s г. - компания: %s, стаж: %s", getName(), getSurname(), getYearOfBirth(), getCompany(), getExperience());
+        return String.format("%s %s %s г. - компания: %s, зарплата: %s тыс. р.", getName(), getSurname(), getYearOfBirth(), getCompany(), getSalary());
     }
 }
 
 class Generator {
     private final String[] names = new String[]{"Павел", "Сергей", "Андрей", "Леонид", "Антон"};
     private final String[] surnames = new String[]{"Климов", "Глазов", "Толстой", "Руков", "Куров"};
-    private final String[] universities = new String[]{"УрФУ", "ВШЭ", "МГУ", "МГТУ", "Политех"};
     private final String[] companies = new String[]{"Газпром", "Яндекс", "Контур", "Аэрофлот", "Альфа банк"};
     private ArrayList<Human> listOfHuman;
 
@@ -133,6 +133,8 @@ class Generator {
 
     public Generator(int countOfHuman) {
         listOfHuman = new ArrayList<Human>();
+        var studentDecimalFormat = new DecimalFormat("#.##");
+        var workerDecimalFormat = new DecimalFormat("#.###");
         int isStudentOrWorker = 0;
         for (int i = 1; i < countOfHuman + 1; i++) {
             isStudentOrWorker = (int) (Math.random() * ((1 - 0) + 1)); // 0 - ученик, 1 - учитель
@@ -140,9 +142,9 @@ class Generator {
             for (int j = 0; j < 3; j++)
                 indexes[j] = (int) (Math.random() * (4 - 0)) + 1;
             if (isStudentOrWorker == 0)
-                listOfHuman.add(new Student(names[indexes[0]], surnames[indexes[1]], (int) (Math.random() * (2005 - 1998)) + 1998, universities[indexes[2]], (int) (Math.random() * (4 - 1)) + 1));
+                listOfHuman.add(new Student(names[indexes[0]], surnames[indexes[1]], (int) (Math.random() * (2005 - 1998)) + 1998, "РИ-" + String.valueOf((int) (Math.random() * (499999 - 100000)) + 100000), Double.parseDouble(studentDecimalFormat.format((Math.random() * (100.00 - 1.00)) + 1.00).replace(',', '.'))));
             else {
-                listOfHuman.add(new Worker(names[indexes[0]], surnames[indexes[1]], (int) (Math.random() * (2000 - 1970)) + 1970, companies[indexes[2]], (int) (Math.random() * (60 - 1)) + 1));
+                listOfHuman.add(new Worker(names[indexes[0]], surnames[indexes[1]], (int) (Math.random() * (2000 - 1970)) + 1970, companies[indexes[2]], Double.parseDouble(workerDecimalFormat.format((Math.random() * (100.000 - 10.000)) + 10.000).replace(',', '.'))));
             }
         }
     }
@@ -185,9 +187,9 @@ class CSV {
             for (var i = 1; i <= lines.size() - 1; i++) {
                 var line = lines.get(i).split(";");
                 if (line[0].equals("Студент")) {
-                    listOfPeople.add(new Student(line[1], line[2], Integer.parseInt(line[3]), line[4], Integer.parseInt(line[5])));
+                    listOfPeople.add(new Student(line[1], line[2], Integer.parseInt(line[3]), line[4], Double.parseDouble(line[5])));
                 } else {
-                    listOfPeople.add(new Worker(line[1], line[2], Integer.parseInt(line[3]), line[4], Integer.parseInt(line[5])));
+                    listOfPeople.add(new Worker(line[1], line[2], Integer.parseInt(line[3]), line[4], Double.parseDouble(line[5])));
                 }
             }
         } catch (IOException exception) {
@@ -195,17 +197,17 @@ class CSV {
         }
     }
 
-    public void makeCSV(String nameCSV, int countOfHuman) throws FileNotFoundException {
+    public void makeRandomCSV(String nameCSV, int countOfHuman) throws FileNotFoundException {
         var generator = new Generator(countOfHuman);
         var csvList = new ArrayList<String[]>();
-        csvList.add(new String[]{"Тип человека", "Имя", "Фамилия", "Год рождения", "Университет/Компания", "Курс/Стаж работы"});
+        csvList.add(new String[]{"Тип человека", "Имя", "Фамилия", "Год рождения", "Академическая группа/Компания", "Количество баллов/Зарплата"});
         for (var hum : generator.getListOfHuman()) {
             if (hum.getClass() == Student.class) {
                 csvList.add(new String[]{"Студент", hum.getName(), hum.getSurname(), Integer.toString(hum.getYearOfBirth()),
-                        ((Student) hum).getUniversity(), Integer.toString(((Student) hum).getCourse())});
+                        ((Student) hum).getAcademicGroup(), Double.toString(((Student) hum).getNumberOfPoints())});
             } else {
                 csvList.add(new String[]{"Рабочий", hum.getName(), hum.getSurname(), Integer.toString(hum.getYearOfBirth()),
-                        ((Worker) hum).getCompany(), Integer.toString(((Worker) hum).getExperience())});
+                        ((Worker) hum).getCompany(), Double.toString(((Worker) hum).getSalary())});
             }
         }
         var newFileCSV = new File(nameCSV);
@@ -213,6 +215,30 @@ class CSV {
             csvList.stream()
                     .map(this::convertToCSV)
                     .forEach(pw::println);
+        }
+    }
+
+    public void makeCSVFromList(String nameCSV, ArrayList<Human> people){
+        var csvList = new ArrayList<String[]>();
+        csvList.add(new String[]{"Тип человека", "Имя", "Фамилия", "Год рождения", "Академическая группа/Компания", "Количество баллов/Зарплата"});
+        for (var hum : people) {
+            if (hum.getClass() == Student.class) {
+                csvList.add(new String[]{"Студент", hum.getName(), hum.getSurname(), Integer.toString(hum.getYearOfBirth()),
+                        ((Student) hum).getAcademicGroup(), Double.toString(((Student) hum).getNumberOfPoints())});
+            } else {
+                csvList.add(new String[]{"Рабочий", hum.getName(), hum.getSurname(), Integer.toString(hum.getYearOfBirth()),
+                        ((Worker) hum).getCompany(), Double.toString(((Worker) hum).getSalary())});
+            }
+        }
+        var newFileCSV = new File(nameCSV);
+        try (PrintWriter pw = new PrintWriter(newFileCSV)) {
+            csvList.stream()
+                    .map(this::convertToCSV)
+                    .forEach(pw::println);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -228,11 +254,10 @@ class CSV {
 
 class console {
     public static void main(String[] args) throws FileNotFoundException {
-        var a = new CSV();
-        a.readCSV("C:\\Users\\79525\\IdeaProjects\\JavaProg\\src\\Люди.csv");
-        a.printHumans();
         var b = new CSV();
-        b.makeCSV("ПробаЛюди111.csv", 5);
+        b.makeRandomCSV("ПробаЛюди111.csv", 5);
+        b.readCSV("C:\\Users\\79525\\Documents\\GitHub\\Java_Study\\Human\\ПробаЛюди111.csv");
+        b.printHumans();
 
     }
 }
