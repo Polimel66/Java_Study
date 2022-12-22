@@ -35,7 +35,7 @@ public class Website {
         return result;
     }
 
-    public static ArrayList<Human> MakePeople(ArrayList<ArrayList<String>> listOfPeople) {
+    public static ArrayList<Human> makePeople(ArrayList<ArrayList<String>> listOfPeople) {
         var result = new ArrayList<Human>();
         for (var person : listOfPeople) {
             result.add(new Student(person.get(0).split(" ")[1], person.get(0).split(" ")[0], (int) ((Math.random() * (2005 - 1998)) + 1998), person.get(1), Double.parseDouble(person.get(4))));
@@ -43,8 +43,41 @@ public class Website {
         return result;
     }
 
+    public static ArrayList<Integer> makeStatisticPoint(ArrayList<ArrayList<String>> listOfPeople)
+    {
+        var result = new ArrayList<Integer>();
+        var firstCount = 0;
+        var secondCount = 0;
+        var thirdCount = 0;
+        var fourthCount = 0;
+        var fifthCount = 0;
+        var value = 0.0;
+        for (var person: listOfPeople)
+        {
+            value = Double.parseDouble(person.get(4));
+            if (value > 75.0 && value < 80.0)
+            {
+                firstCount += 1;
+            } else if (value > 80.0 && value < 85.0) {
+                secondCount += 1;
+            } else if (value > 85.0 && value < 90.0) {
+                thirdCount += 1;
+            } else if (value > 90.0 && value < 95.0) {
+                fourthCount += 1;
+            } else if (value > 95.0 && value < 100.0) {
+                fifthCount += 1;
+            }
+        }
+        result.add(firstCount);
+        result.add(secondCount);
+        result.add(thirdCount);
+        result.add(fourthCount);
+        result.add(fifthCount);
+        return result;
+    }
+
     public static void main(String[] args) {
         var information = ParseSite();
-        System.out.println(MakePeople(information));
+        System.out.println(makePeople(information));
     }
 }

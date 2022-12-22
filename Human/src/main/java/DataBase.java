@@ -9,8 +9,10 @@ public class DataBase {
     public static void main(String[] args) {
         var connection = createDatabase(url, username, password);
         //fillDatabaseFromCSV(connection, "C:\\Users\\79525\\Documents\\GitHub\\Java_Study\\Human\\ПробаЛюди111.csv");
-//        var website = new Website();
-        fillDatabaseFromWebsite(connection, Website.MakePeople(Website.ParseSite()));
+        //var website = new Website();
+        var informationFromParse = Website.ParseSite();
+        fillDatabaseFromWebsite(connection, Website.makePeople(informationFromParse));
+        Chart.makeChart(Website.makeStatisticPoint(informationFromParse));
         var loadFromBD = readDatabase(connection);
         var csv = new CSV();
         csv.makeCSVFromList("ФайлИзБДиСайта", loadFromBD);
